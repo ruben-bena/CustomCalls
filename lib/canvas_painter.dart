@@ -4,13 +4,17 @@ import 'drawable.dart';
 
 class CanvasPainter extends CustomPainter {
   final List<Drawable> drawables;
+  final int? selectedIndex;
 
-  CanvasPainter({required this.drawables});
+  CanvasPainter({required this.drawables, this.selectedIndex});
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (var drawable in drawables) {
-      drawable.draw(canvas);
+    for (int i = 0; i < drawables.length; i++) {
+      drawables[i].draw(canvas);
+      if (selectedIndex == i) {
+        drawables[i].drawSelected(canvas);
+      }
     }
   }
 
