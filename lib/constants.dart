@@ -87,5 +87,68 @@ const tools = [
         "required": ["text", "x", "y"]
       }
     }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "select_shape",
+      "description": "Select a shape by its id. If no id is provided, it can select the last created shape.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "last": {"type": "boolean"}
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "delete_shape",
+      "description": "Delete a shape by its id. If no id is provided, it deletes the selected shape.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"}
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "update_shape",
+      "description": "Change properties of an existing shape. Supports id and properties such as color, fillColor, strokeColor, strokeWidth, x, y, radius, width, height, text, fontSize, bold, etc. If no id is provided, it updates the selected shape.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "color": {"type": "string"},
+          "fillColor": {"type": "string"},
+          "strokeColor": {"type": "string"},
+          "strokeWidth": {"type": "number"},
+          "x": {"type": "number"},
+          "y": {"type": "number"},
+          "radius": {"type": "number"},
+          "width": {"type": "number"},
+          "height": {"type": "number"},
+          "text": {"type": "string"},
+          "fontSize": {"type": "number"},
+          "bold": {"type": "boolean"}
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "clear_canvas",
+      "description": "Clear the entire drawing.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    }
   }
 ];

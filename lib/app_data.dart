@@ -357,7 +357,7 @@ class AppData extends ChangeNotifier {
     try {
       var request = http.Request(
         'POST',
-        Uri.parse('http://localhost:11434/api/generate'),
+        Uri.parse('http://localhost:11424/api/generate'),
       );
 
       request.headers.addAll({'Content-Type': 'application/json'});
@@ -433,9 +433,9 @@ class AppData extends ChangeNotifier {
         ((value.contains('{') || value.contains('[')) && value.contains(':'));
   }
 
-        // Pide al modelo que repare JSON malformado y devuelve objeto parseado.
+  // Pide al modelo que repare JSON malformado y devuelve objeto parseado.
   Future<dynamic> _repairJsonWithAi(String rawJson) async {
-    const apiUrl = 'http://localhost:11434/api/chat';
+    const apiUrl = 'http://localhost:11424/api/chat';
     final body = {
       "model": jsonFixModel,
       "stream": false,
@@ -494,7 +494,7 @@ class AppData extends ChangeNotifier {
 
   // Llama al endpoint con tools y ejecuta funciones devueltas por el modelo.
   Future<void> callWithCustomTools({required String userPrompt}) async {
-    const apiUrl = 'http://localhost:11434/api/chat';
+    const apiUrl = 'http://localhost:11424/api/chat';
     _isInitial = false;
     setLoading(true);
 
@@ -780,6 +780,17 @@ class AppData extends ChangeNotifier {
         } else {
           print("Missing text properties: $parameters");
         }
+        break;
+
+      /**
+      * TODOs:
+      * - select_shape
+      * - delete_shape
+      * - update_shape
+      */ 
+
+      case 'clear_canvas':
+        drawables.clear();
         break;
 
       // Fallback para tools no soportadas.
