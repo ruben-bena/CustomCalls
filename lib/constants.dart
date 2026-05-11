@@ -119,7 +119,8 @@ const tools = [
     "type": "function",
     "function": {
       "name": "update_shape",
-      "description": "Change properties of the currently selected shape. Supports index and properties such as color, fillColor, strokeColor, strokeWidth, x, y, radius, width, height, text, fontSize, bold, etc. If no index is provided, it updates the selected shape.",
+      "description":
+          "Modifica las propiedades de la forma seleccionada actualmente. Para círculos: x, y, radius, color/fillColor, strokeWidth, gradientColors. Para rectángulos: topLeftX, topLeftY, bottomRightX, bottomRightY, width, height, color/fillColor, strokeWidth, gradientColors. Para líneas: startX, startY, endX, endY, color/strokeColor, strokeWidth. Para texto: x, y, text, color, fontSize, fontWeight, fontStyle, bold. Puede especificar 'id' para dirigirse a un índice de forma específico, de lo contrario actualiza la forma seleccionada.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -133,9 +134,23 @@ const tools = [
           "radius": {"type": "number"},
           "width": {"type": "number"},
           "height": {"type": "number"},
+          "topLeftX": {"type": "number"},
+          "topLeftY": {"type": "number"},
+          "bottomRightX": {"type": "number"},
+          "bottomRightY": {"type": "number"},
+          "startX": {"type": "number"},
+          "startY": {"type": "number"},
+          "endX": {"type": "number"},
+          "endY": {"type": "number"},
           "text": {"type": "string"},
           "fontSize": {"type": "number"},
-          "bold": {"type": "boolean"}
+          "fontWeight": {"type": "string"},
+          "fontStyle": {"type": "string"},
+          "bold": {"type": "boolean"},
+          "gradientColors": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
         }
       }
     }

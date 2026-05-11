@@ -125,215 +125,333 @@ class AppData extends ChangeNotifier {
   }
 
   void updateShapeProperty(int index, String property, dynamic value) {
-    if (index >= 0 && index < drawables.length) {
-      final shape = drawables[index];
-      
-      // Actualiza propiedades de círculos creando una nueva instancia.
-      if (shape is Circle) {
-        switch (property) {
-          case 'x':
-            drawables[index] = Circle(
-              center: Offset(parseDouble(value), shape.center.dy),
-              radius: shape.radius,
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'y':
-            drawables[index] = Circle(
-              center: Offset(shape.center.dx, parseDouble(value)),
-              radius: shape.radius,
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'radius':
-            drawables[index] = Circle(
-              center: shape.center,
-              radius: parseDouble(value),
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'color':
-            drawables[index] = Circle(
-              center: shape.center,
-              radius: shape.radius,
-              color: parseColor(value),
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'strokeWidth':
-            drawables[index] = Circle(
-              center: shape.center,
-              radius: shape.radius,
-              color: shape.color,
-              strokeWidth: parseDouble(value),
-              gradientColors: shape.gradientColors,
-            );
-            break;
-        }
-      // Actualiza propiedades de rectángulos creando una nueva instancia.
-      } else if (shape is Rectangle) {
-        switch (property) {
-          case 'topLeftX':
-            drawables[index] = Rectangle(
-              topLeft: Offset(parseDouble(value), shape.topLeft.dy),
-              bottomRight: shape.bottomRight,
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'topLeftY':
-            drawables[index] = Rectangle(
-              topLeft: Offset(shape.topLeft.dx, parseDouble(value)),
-              bottomRight: shape.bottomRight,
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'bottomRightX':
-            drawables[index] = Rectangle(
-              topLeft: shape.topLeft,
-              bottomRight: Offset(parseDouble(value), shape.bottomRight.dy),
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'bottomRightY':
-            drawables[index] = Rectangle(
-              topLeft: shape.topLeft,
-              bottomRight: Offset(shape.bottomRight.dx, parseDouble(value)),
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'color':
-            drawables[index] = Rectangle(
-              topLeft: shape.topLeft,
-              bottomRight: shape.bottomRight,
-              color: parseColor(value),
-              strokeWidth: shape.strokeWidth,
-              gradientColors: shape.gradientColors,
-            );
-            break;
-          case 'strokeWidth':
-            drawables[index] = Rectangle(
-              topLeft: shape.topLeft,
-              bottomRight: shape.bottomRight,
-              color: shape.color,
-              strokeWidth: parseDouble(value),
-              gradientColors: shape.gradientColors,
-            );
-            break;
-        }
-      // Actualiza propiedades de líneas creando una nueva instancia.
-      } else if (shape is Line) {
-        switch (property) {
-          case 'startX':
-            drawables[index] = Line(
-              start: Offset(parseDouble(value), shape.start.dy),
-              end: shape.end,
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-            );
-            break;
-          case 'startY':
-            drawables[index] = Line(
-              start: Offset(shape.start.dx, parseDouble(value)),
-              end: shape.end,
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-            );
-            break;
-          case 'endX':
-            drawables[index] = Line(
-              start: shape.start,
-              end: Offset(parseDouble(value), shape.end.dy),
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-            );
-            break;
-          case 'endY':
-            drawables[index] = Line(
-              start: shape.start,
-              end: Offset(shape.end.dx, parseDouble(value)),
-              color: shape.color,
-              strokeWidth: shape.strokeWidth,
-            );
-            break;
-          case 'color':
-            drawables[index] = Line(
-              start: shape.start,
-              end: shape.end,
-              color: parseColor(value),
-              strokeWidth: shape.strokeWidth,
-            );
-            break;
-          case 'strokeWidth':
-            drawables[index] = Line(
-              start: shape.start,
-              end: shape.end,
-              color: shape.color,
-              strokeWidth: parseDouble(value),
-            );
-            break;
-        }
-      // Actualiza propiedades de texto creando una nueva instancia.
-      } else if (shape is TextElement) {
-        switch (property) {
-          case 'x':
-            drawables[index] = TextElement(
-              text: shape.text,
-              position: Offset(parseDouble(value), shape.position.dy),
-              color: shape.color,
-              fontSize: shape.fontSize,
-              fontWeight: shape.fontWeight,
-              fontStyle: shape.fontStyle,
-            );
-            break;
-          case 'y':
-            drawables[index] = TextElement(
-              text: shape.text,
-              position: Offset(shape.position.dx, parseDouble(value)),
-              color: shape.color,
-              fontSize: shape.fontSize,
-              fontWeight: shape.fontWeight,
-              fontStyle: shape.fontStyle,
-            );
-            break;
-          case 'color':
-            drawables[index] = TextElement(
-              text: shape.text,
-              position: shape.position,
-              color: parseColor(value),
-              fontSize: shape.fontSize,
-              fontWeight: shape.fontWeight,
-              fontStyle: shape.fontStyle,
-            );
-            break;
-          case 'fontSize':
-            drawables[index] = TextElement(
-              text: shape.text,
-              position: shape.position,
-              color: shape.color,
-              fontSize: parseDouble(value),
-              fontWeight: shape.fontWeight,
-              fontStyle: shape.fontStyle,
-            );
-            break;
-        }
-      }
-      notifyListeners();
+    // Validación: índice debe estar dentro de los límites.
+    if (index < 0 || index >= drawables.length) {
+      return;
     }
+
+    final shape = drawables[index];
+
+    // Actualiza propiedades de círculos creando una nueva instancia con los nuevos valores.
+    if (shape is Circle) {
+      switch (property) {
+        // Actualiza la coordenada X del centro del círculo.
+        case 'x':
+          drawables[index] = Circle(
+            center: Offset(parseDouble(value), shape.center.dy),
+            radius: shape.radius,
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza la coordenada Y del centro del círculo.
+        case 'y':
+          drawables[index] = Circle(
+            center: Offset(shape.center.dx, parseDouble(value)),
+            radius: shape.radius,
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el radio del círculo.
+        case 'radius':
+          drawables[index] = Circle(
+            center: shape.center,
+            radius: parseDouble(value),
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el color de relleno del círculo (o color del trazo si no hay gradiente).
+        case 'color':
+        case 'fillColor':
+          drawables[index] = Circle(
+            center: shape.center,
+            radius: shape.radius,
+            color: parseColor(value),
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el ancho del trazo del círculo.
+        case 'strokeWidth':
+          drawables[index] = Circle(
+            center: shape.center,
+            radius: shape.radius,
+            color: shape.color,
+            strokeWidth: parseDouble(value),
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza los colores del gradiente lineal del círculo.
+        case 'gradientColors':
+          drawables[index] = Circle(
+            center: shape.center,
+            radius: shape.radius,
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: parseGradientColors(value),
+          );
+          break;
+      }
+    }
+    // Actualiza propiedades de rectángulos creando una nueva instancia con los nuevos valores.
+    else if (shape is Rectangle) {
+      switch (property) {
+        // Actualiza la coordenada X de la esquina superior izquierda.
+        case 'topLeftX':
+          drawables[index] = Rectangle(
+            topLeft: Offset(parseDouble(value), shape.topLeft.dy),
+            bottomRight: shape.bottomRight,
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza la coordenada Y de la esquina superior izquierda.
+        case 'topLeftY':
+          drawables[index] = Rectangle(
+            topLeft: Offset(shape.topLeft.dx, parseDouble(value)),
+            bottomRight: shape.bottomRight,
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza la coordenada X de la esquina inferior derecha.
+        case 'bottomRightX':
+          drawables[index] = Rectangle(
+            topLeft: shape.topLeft,
+            bottomRight: Offset(parseDouble(value), shape.bottomRight.dy),
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza la coordenada Y de la esquina inferior derecha.
+        case 'bottomRightY':
+          drawables[index] = Rectangle(
+            topLeft: shape.topLeft,
+            bottomRight: Offset(shape.bottomRight.dx, parseDouble(value)),
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el ancho del rectángulo manteniendo la esquina superior izquierda fija.
+        case 'width':
+          final newBottomRightX = shape.topLeft.dx + parseDouble(value);
+          drawables[index] = Rectangle(
+            topLeft: shape.topLeft,
+            bottomRight: Offset(newBottomRightX, shape.bottomRight.dy),
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el alto del rectángulo manteniendo la esquina superior izquierda fija.
+        case 'height':
+          final newBottomRightY = shape.topLeft.dy + parseDouble(value);
+          drawables[index] = Rectangle(
+            topLeft: shape.topLeft,
+            bottomRight: Offset(shape.bottomRight.dx, newBottomRightY),
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el color de relleno del rectángulo (o color del trazo si no hay gradiente).
+        case 'color':
+        case 'fillColor':
+          drawables[index] = Rectangle(
+            topLeft: shape.topLeft,
+            bottomRight: shape.bottomRight,
+            color: parseColor(value),
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el ancho del trazo del rectángulo.
+        case 'strokeWidth':
+          drawables[index] = Rectangle(
+            topLeft: shape.topLeft,
+            bottomRight: shape.bottomRight,
+            color: shape.color,
+            strokeWidth: parseDouble(value),
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza los colores del gradiente lineal del rectángulo.
+        case 'gradientColors':
+          drawables[index] = Rectangle(
+            topLeft: shape.topLeft,
+            bottomRight: shape.bottomRight,
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: parseGradientColors(value),
+          );
+          break;
+      }
+    }
+    // Actualiza propiedades de líneas creando una nueva instancia con los nuevos valores.
+    else if (shape is Line) {
+      switch (property) {
+        // Actualiza la coordenada X del punto inicial de la línea.
+        case 'startX':
+          drawables[index] = Line(
+            start: Offset(parseDouble(value), shape.start.dy),
+            end: shape.end,
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+          );
+          break;
+        // Actualiza la coordenada Y del punto inicial de la línea.
+        case 'startY':
+          drawables[index] = Line(
+            start: Offset(shape.start.dx, parseDouble(value)),
+            end: shape.end,
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+          );
+          break;
+        // Actualiza la coordenada X del punto final de la línea.
+        case 'endX':
+          drawables[index] = Line(
+            start: shape.start,
+            end: Offset(parseDouble(value), shape.end.dy),
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+          );
+          break;
+        // Actualiza la coordenada Y del punto final de la línea.
+        case 'endY':
+          drawables[index] = Line(
+            start: shape.start,
+            end: Offset(shape.end.dx, parseDouble(value)),
+            color: shape.color,
+            strokeWidth: shape.strokeWidth,
+          );
+          break;
+        // Actualiza el color de la línea.
+        case 'color':
+        case 'strokeColor':
+          drawables[index] = Line(
+            start: shape.start,
+            end: shape.end,
+            color: parseColor(value),
+            strokeWidth: shape.strokeWidth,
+          );
+          break;
+        // Actualiza el ancho del trazo de la línea.
+        case 'strokeWidth':
+          drawables[index] = Line(
+            start: shape.start,
+            end: shape.end,
+            color: shape.color,
+            strokeWidth: parseDouble(value),
+          );
+          break;
+      }
+    }
+    // Actualiza propiedades de texto creando una nueva instancia con los nuevos valores.
+    else if (shape is TextElement) {
+      switch (property) {
+        // Actualiza la coordenada X de la posición del texto.
+        case 'x':
+          drawables[index] = TextElement(
+            text: shape.text,
+            position: Offset(parseDouble(value), shape.position.dy),
+            color: shape.color,
+            fontSize: shape.fontSize,
+            fontWeight: shape.fontWeight,
+            fontStyle: shape.fontStyle,
+          );
+          break;
+        // Actualiza la coordenada Y de la posición del texto.
+        case 'y':
+          drawables[index] = TextElement(
+            text: shape.text,
+            position: Offset(shape.position.dx, parseDouble(value)),
+            color: shape.color,
+            fontSize: shape.fontSize,
+            fontWeight: shape.fontWeight,
+            fontStyle: shape.fontStyle,
+          );
+          break;
+        // Actualiza el contenido de texto del elemento.
+        case 'text':
+          drawables[index] = TextElement(
+            text: value.toString(),
+            position: shape.position,
+            color: shape.color,
+            fontSize: shape.fontSize,
+            fontWeight: shape.fontWeight,
+            fontStyle: shape.fontStyle,
+          );
+          break;
+        // Actualiza el color del texto.
+        case 'color':
+          drawables[index] = TextElement(
+            text: shape.text,
+            position: shape.position,
+            color: parseColor(value),
+            fontSize: shape.fontSize,
+            fontWeight: shape.fontWeight,
+            fontStyle: shape.fontStyle,
+          );
+          break;
+        // Actualiza el tamaño de la fuente del texto.
+        case 'fontSize':
+          drawables[index] = TextElement(
+            text: shape.text,
+            position: shape.position,
+            color: shape.color,
+            fontSize: parseDouble(value),
+            fontWeight: shape.fontWeight,
+            fontStyle: shape.fontStyle,
+          );
+          break;
+        // Actualiza el peso de la fuente del texto (normal, bold, light, etc).
+        case 'fontWeight':
+          drawables[index] = TextElement(
+            text: shape.text,
+            position: shape.position,
+            color: shape.color,
+            fontSize: shape.fontSize,
+            fontWeight: parseFontWeight(value),
+            fontStyle: shape.fontStyle,
+          );
+          break;
+        // Actualiza el estilo de la fuente del texto (normal, italic).
+        case 'fontStyle':
+          drawables[index] = TextElement(
+            text: shape.text,
+            position: shape.position,
+            color: shape.color,
+            fontSize: shape.fontSize,
+            fontWeight: shape.fontWeight,
+            fontStyle: parseFontStyle(value),
+          );
+          break;
+        // Atajo para establecer el peso de la fuente a bold (verdadero) o normal (falso).
+        case 'bold':
+          drawables[index] = TextElement(
+            text: shape.text,
+            position: shape.position,
+            color: shape.color,
+            fontSize: shape.fontSize,
+            fontWeight: (value is bool && value) ? FontWeight.bold : FontWeight.normal,
+            fontStyle: shape.fontStyle,
+          );
+          break;
+      }
+    }
+
+    // Notifica a los listeners que el estado ha cambiado para que se redibuje la UI.
+    notifyListeners();
   }
 
   // Hit-test: comprueba si un punto cae dentro de una forma.
@@ -765,33 +883,34 @@ class AppData extends ChangeNotifier {
         addDrawable(Line(start: start, end: end, color: color, strokeWidth: strokeWidth));
         break;
 
-      // Dibuja un rectángulo cuando llegan todas las coordenadas necesarias.
+      // Dibuja un rectángulo con valores por defecto si faltan coordenadas.
       case 'draw_rectangle':
-        if (parameters['topLeftX'] != null &&
-            parameters['topLeftY'] != null &&
-            parameters['bottomRightX'] != null &&
-            parameters['bottomRightY'] != null) {
-          final topLeftX = parseDouble(parameters['topLeftX']);
-          final topLeftY = parseDouble(parameters['topLeftY']);
-          final bottomRightX = parseDouble(parameters['bottomRightX']);
-          final bottomRightY = parseDouble(parameters['bottomRightY']);
-          final color = parseColor(parameters['color']);
-          final strokeWidth = parameters['strokeWidth'] != null
-              ? parseDouble(parameters['strokeWidth'])
-              : 2.0;
-          final gradientColors = parseGradientColors(parameters['gradientColors']);
-          final topLeft = Offset(topLeftX, topLeftY);
-          final bottomRight = Offset(bottomRightX, bottomRightY);
-          addDrawable(Rectangle(
-            topLeft: topLeft,
-            bottomRight: bottomRight,
-            color: color,
-            strokeWidth: strokeWidth,
-            gradientColors: gradientColors.isNotEmpty ? gradientColors : null,
-          ));
-        } else {
-          print("Missing rectangle properties: $parameters");
-        }
+        final topLeftX = parameters['topLeftX'] != null
+            ? parseDouble(parameters['topLeftX'])
+            : 20.0;
+        final topLeftY = parameters['topLeftY'] != null
+            ? parseDouble(parameters['topLeftY'])
+            : 20.0;
+        final bottomRightX = parameters['bottomRightX'] != null
+            ? parseDouble(parameters['bottomRightX'])
+            : 100.0;
+        final bottomRightY = parameters['bottomRightY'] != null
+            ? parseDouble(parameters['bottomRightY'])
+            : 100.0;
+        final color = parseColor(parameters['color']);
+        final strokeWidth = parameters['strokeWidth'] != null
+            ? parseDouble(parameters['strokeWidth'])
+            : 2.0;
+        final gradientColors = parseGradientColors(parameters['gradientColors']);
+        final topLeft = Offset(topLeftX, topLeftY);
+        final bottomRight = Offset(bottomRightX, bottomRightY);
+        addDrawable(Rectangle(
+          topLeft: topLeft,
+          bottomRight: bottomRight,
+          color: color,
+          strokeWidth: strokeWidth,
+          gradientColors: gradientColors.isNotEmpty ? gradientColors : null,
+        ));
         break;
 
       // Dibuja texto con estilo opcional.

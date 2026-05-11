@@ -58,6 +58,7 @@ class Rectangle extends Drawable {
     final paint = Paint();
 
     if (gradientColors != null && gradientColors!.isNotEmpty) {
+      // Si hay colores de gradiente, dibuja el rectángulo relleno con el gradiente lineal.
       final gradient = LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -66,9 +67,10 @@ class Rectangle extends Drawable {
       paint.shader = gradient.createShader(rect);
       paint.style = PaintingStyle.fill;
     } else {
+      // Si no hay gradiente, dibuja el rectángulo relleno con el color sólido especificado.
       paint.color = color!;
       paint.strokeWidth = strokeWidth;
-      paint.style = PaintingStyle.stroke;
+      paint.style = PaintingStyle.fill;
     }
 
     canvas.drawRect(rect, paint);
