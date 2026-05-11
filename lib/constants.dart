@@ -5,7 +5,7 @@ const tools = [
     "function": {
       "name": "draw_circle",
       "description":
-          "Draw a circle with a specified radius. If the radius is missing, use 10 as default. If the radius should be random, use a random value between 10 and 25. You can specify the color as a string (e.g., 'red', 'blue', 'green', etc.), stroke width for outline, or gradient colors as an array of strings for a linear gradient fill.",
+          "Draw a circle with a specified radius. If the radius is missing, use 10 as default. If the radius should be random, use a random value between 10 and 25. You can specify fillColor (or color) for the fill, strokeColor for the border, strokeWidth for outline thickness, and gradientColors as an array of strings for a linear gradient fill.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -13,6 +13,8 @@ const tools = [
           "y": {"type": "number"},
           "radius": {"type": "number"},
           "color": {"type": "string"},
+          "fillColor": {"type": "string"},
+          "strokeColor": {"type": "string"},
           "strokeWidth": {"type": "number"},
           "gradientColors": {
             "type": "array",
@@ -48,7 +50,7 @@ const tools = [
     "function": {
       "name": "draw_rectangle",
       "description":
-          "Draw a rectangle defined by the top-left and bottom-right coordinates. You can specify the color as a string (e.g., 'red', 'blue', 'green', etc.), stroke width for outline, or gradient colors as an array of strings for a linear gradient fill.",
+          "Draw a rectangle defined by the top-left and bottom-right coordinates. You can specify fillColor (or color) for the fill, strokeColor for the border, strokeWidth for outline thickness, or gradientColors as an array of strings for a linear gradient fill.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -57,6 +59,8 @@ const tools = [
           "bottomRightX": {"type": "number"},
           "bottomRightY": {"type": "number"},
           "color": {"type": "string"},
+          "fillColor": {"type": "string"},
+          "strokeColor": {"type": "string"},
           "strokeWidth": {"type": "number"},
           "gradientColors": {
             "type": "array",

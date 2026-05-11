@@ -172,6 +172,18 @@ class AppData extends ChangeNotifier {
             center: shape.center,
             radius: shape.radius,
             color: parseColor(value),
+            strokeColor: shape.strokeColor,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el color del borde del círculo.
+        case 'strokeColor':
+          drawables[index] = Circle(
+            center: shape.center,
+            radius: shape.radius,
+            color: shape.color,
+            strokeColor: parseColor(value),
             strokeWidth: shape.strokeWidth,
             gradientColors: shape.gradientColors,
           );
@@ -182,6 +194,7 @@ class AppData extends ChangeNotifier {
             center: shape.center,
             radius: shape.radius,
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: parseDouble(value),
             gradientColors: shape.gradientColors,
           );
@@ -192,6 +205,7 @@ class AppData extends ChangeNotifier {
             center: shape.center,
             radius: shape.radius,
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: shape.strokeWidth,
             gradientColors: parseGradientColors(value),
           );
@@ -207,6 +221,7 @@ class AppData extends ChangeNotifier {
             topLeft: Offset(parseDouble(value), shape.topLeft.dy),
             bottomRight: shape.bottomRight,
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: shape.strokeWidth,
             gradientColors: shape.gradientColors,
           );
@@ -217,6 +232,7 @@ class AppData extends ChangeNotifier {
             topLeft: Offset(shape.topLeft.dx, parseDouble(value)),
             bottomRight: shape.bottomRight,
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: shape.strokeWidth,
             gradientColors: shape.gradientColors,
           );
@@ -227,6 +243,7 @@ class AppData extends ChangeNotifier {
             topLeft: shape.topLeft,
             bottomRight: Offset(parseDouble(value), shape.bottomRight.dy),
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: shape.strokeWidth,
             gradientColors: shape.gradientColors,
           );
@@ -237,6 +254,7 @@ class AppData extends ChangeNotifier {
             topLeft: shape.topLeft,
             bottomRight: Offset(shape.bottomRight.dx, parseDouble(value)),
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: shape.strokeWidth,
             gradientColors: shape.gradientColors,
           );
@@ -248,6 +266,7 @@ class AppData extends ChangeNotifier {
             topLeft: shape.topLeft,
             bottomRight: Offset(newBottomRightX, shape.bottomRight.dy),
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: shape.strokeWidth,
             gradientColors: shape.gradientColors,
           );
@@ -259,6 +278,7 @@ class AppData extends ChangeNotifier {
             topLeft: shape.topLeft,
             bottomRight: Offset(shape.bottomRight.dx, newBottomRightY),
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: shape.strokeWidth,
             gradientColors: shape.gradientColors,
           );
@@ -270,6 +290,18 @@ class AppData extends ChangeNotifier {
             topLeft: shape.topLeft,
             bottomRight: shape.bottomRight,
             color: parseColor(value),
+            strokeColor: shape.strokeColor,
+            strokeWidth: shape.strokeWidth,
+            gradientColors: shape.gradientColors,
+          );
+          break;
+        // Actualiza el color del borde del rectángulo.
+        case 'strokeColor':
+          drawables[index] = Rectangle(
+            topLeft: shape.topLeft,
+            bottomRight: shape.bottomRight,
+            color: shape.color,
+            strokeColor: parseColor(value),
             strokeWidth: shape.strokeWidth,
             gradientColors: shape.gradientColors,
           );
@@ -280,6 +312,7 @@ class AppData extends ChangeNotifier {
             topLeft: shape.topLeft,
             bottomRight: shape.bottomRight,
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: parseDouble(value),
             gradientColors: shape.gradientColors,
           );
@@ -290,6 +323,7 @@ class AppData extends ChangeNotifier {
             topLeft: shape.topLeft,
             bottomRight: shape.bottomRight,
             color: shape.color,
+            strokeColor: shape.strokeColor,
             strokeWidth: shape.strokeWidth,
             gradientColors: parseGradientColors(value),
           );
@@ -722,10 +756,22 @@ class AppData extends ChangeNotifier {
     return 0.0;
   }
 
-  // Convierte nombre de color (string) a Color.
+  // Convierte nombre/código de color a Color (nombre, hex, rgb, rgba).
   Color parseColor(dynamic value) {
+    final parsed = tryParseColor(value);
+    return parsed ?? Colors.black;
+  }
+
+  // Intenta parsear un color; retorna null si no es válido.
+  Color? tryParseColor(dynamic value) {
+    if (value is Color) {
+      return value;
+    }
+
     if (value is String) {
-      switch (value.toLowerCase()) {
+      final normalized = value.trim().toLowerCase();
+
+      switch (normalized) {
         case 'red':
           return Colors.red;
         case 'blue':
@@ -749,17 +795,77 @@ class AppData extends ChangeNotifier {
         case 'grey':
         case 'gray':
           return Colors.grey;
-        default:
-          return Colors.black;
+      }
+
+      // #RRGGBB o #AARRGGBB
+      if (normalized.startsWith('#')) {
+        final hex = normalized.substring(1);
+        if (hex.length == 6) {
+          final rgb = int.tryParse(hex, radix: 16);
+          if (rgb != null) {
+            return Color(0xFF000000 | rgb);
+          }
+        }
+        if (hex.length == 8) {
+          final argb = int.tryParse(hex, radix: 16);
+          if (argb != null) {
+            return Color(argb);
+          }
+        }
+      }
+
+      // 0xAARRGGBB o 0xRRGGBB
+      if (normalized.startsWith('0x')) {
+        final hex = normalized.substring(2);
+        final parsedHex = int.tryParse(hex, radix: 16);
+        if (parsedHex != null) {
+          if (hex.length <= 6) {
+            return Color(0xFF000000 | parsedHex);
+          }
+          return Color(parsedHex);
+        }
+      }
+
+      // rgb(r,g,b)
+      final rgbMatch = RegExp(r'^rgb\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$')
+          .firstMatch(normalized);
+      if (rgbMatch != null) {
+        final r = int.parse(rgbMatch.group(1)!);
+        final g = int.parse(rgbMatch.group(2)!);
+        final b = int.parse(rgbMatch.group(3)!);
+        if (r <= 255 && g <= 255 && b <= 255) {
+          return Color.fromARGB(255, r, g, b);
+        }
+      }
+
+      // rgba(r,g,b,a) donde a puede ser 0..1 o 0..255
+      final rgbaMatch = RegExp(
+        r'^rgba\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([0-9]*\.?[0-9]+)\s*\)$',
+      ).firstMatch(normalized);
+      if (rgbaMatch != null) {
+        final r = int.parse(rgbaMatch.group(1)!);
+        final g = int.parse(rgbaMatch.group(2)!);
+        final b = int.parse(rgbaMatch.group(3)!);
+        final alphaRaw = double.tryParse(rgbaMatch.group(4)!);
+        if (alphaRaw != null && r <= 255 && g <= 255 && b <= 255) {
+          final alpha = alphaRaw <= 1
+              ? (alphaRaw * 255).round().clamp(0, 255)
+              : alphaRaw.round().clamp(0, 255);
+          return Color.fromARGB(alpha, r, g, b);
+        }
       }
     }
-    return Colors.black;
+
+    return null;
   }
 
   // Convierte lista dinámica en lista de colores.
   List<Color> parseGradientColors(dynamic value) {
     if (value is List) {
-      return value.map((color) => parseColor(color)).toList();
+      return value
+          .map((color) => tryParseColor(color))
+          .whereType<Color>()
+          .toList();
     }
     return [];
   }
@@ -844,7 +950,10 @@ class AppData extends ChangeNotifier {
         final radius = parameters['radius'] != null
             ? parseDouble(parameters['radius'])
             : 10.0;
-        final color = parseColor(parameters['color']);
+        final fillColor = parameters['fillColor'] ?? parameters['color'];
+        final strokeColorParam = parameters['strokeColor'] ?? parameters['color'];
+        final color = parseColor(fillColor);
+        final strokeColor = parseColor(strokeColorParam);
         final strokeWidth = parameters['strokeWidth'] != null
             ? parseDouble(parameters['strokeWidth'])
             : 2.0;
@@ -854,6 +963,7 @@ class AppData extends ChangeNotifier {
             center: Offset(dx, dy),
             radius: max(0.0, radius),
             color: color,
+            strokeColor: strokeColor,
             strokeWidth: strokeWidth,
             gradientColors: gradientColors.isNotEmpty ? gradientColors : null,
           ),
@@ -897,7 +1007,10 @@ class AppData extends ChangeNotifier {
         final bottomRightY = parameters['bottomRightY'] != null
             ? parseDouble(parameters['bottomRightY'])
             : 100.0;
-        final color = parseColor(parameters['color']);
+        final fillColor = parameters['fillColor'] ?? parameters['color'];
+        final strokeColorParam = parameters['strokeColor'] ?? parameters['color'];
+        final color = parseColor(fillColor);
+        final strokeColor = parseColor(strokeColorParam);
         final strokeWidth = parameters['strokeWidth'] != null
             ? parseDouble(parameters['strokeWidth'])
             : 2.0;
@@ -908,6 +1021,7 @@ class AppData extends ChangeNotifier {
           topLeft: topLeft,
           bottomRight: bottomRight,
           color: color,
+          strokeColor: strokeColor,
           strokeWidth: strokeWidth,
           gradientColors: gradientColors.isNotEmpty ? gradientColors : null,
         ));

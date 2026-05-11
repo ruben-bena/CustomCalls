@@ -40,7 +40,8 @@ class Line extends Drawable {
 class Rectangle extends Drawable {
   final Offset topLeft;
   final Offset bottomRight;
-  final Color? color;
+  final Color color;
+  final Color strokeColor;
   final double strokeWidth;
   final List<Color>? gradientColors;
 
@@ -48,6 +49,7 @@ class Rectangle extends Drawable {
     required this.topLeft,
     required this.bottomRight,
     this.color = Colors.black,
+    this.strokeColor = Colors.black,
     this.strokeWidth = 2.0,
     this.gradientColors,
   });
@@ -57,7 +59,7 @@ class Rectangle extends Drawable {
     final rect = Rect.fromPoints(topLeft, bottomRight);
     final paint = Paint();
 
-    if (gradientColors != null && gradientColors!.isNotEmpty) {
+    if (gradientColors != null && gradientColors!.length >= 2) {
       // Si hay colores de gradiente, dibuja el rectángulo relleno con el gradiente lineal.
       final gradient = LinearGradient(
         begin: Alignment.topLeft,
@@ -66,14 +68,25 @@ class Rectangle extends Drawable {
       );
       paint.shader = gradient.createShader(rect);
       paint.style = PaintingStyle.fill;
+    } else if (gradientColors != null && gradientColors!.length == 1) {
+      // Evita excepciones de gradiente inválido cuando solo llega un color.
+      paint.color = gradientColors!.first;
+      paint.style = PaintingStyle.fill;
     } else {
       // Si no hay gradiente, dibuja el rectángulo relleno con el color sólido especificado.
-      paint.color = color!;
-      paint.strokeWidth = strokeWidth;
+      paint.color = color;
       paint.style = PaintingStyle.fill;
     }
 
     canvas.drawRect(rect, paint);
+
+    if (strokeWidth > 0) {
+      final strokePaint = Paint()
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke;
+      canvas.drawRect(rect, strokePaint);
+    }
   }
 
   @override
@@ -93,7 +106,8 @@ class Rectangle extends Drawable {
 class Circle extends Drawable {
   final Offset center;
   final double radius;
-  final Color? color;
+  final Color color;
+  final Color strokeColor;
   final double strokeWidth;
   final List<Color>? gradientColors;
 
@@ -101,6 +115,7 @@ class Circle extends Drawable {
     required this.center,
     required this.radius,
     this.color = Colors.black,
+    this.strokeColor = Colors.black,
     this.strokeWidth = 2.0,
     this.gradientColors,
   });
@@ -110,7 +125,7 @@ class Circle extends Drawable {
     final rect = Rect.fromCircle(center: center, radius: radius);
     final paint = Paint();
 
-    if (gradientColors != null && gradientColors!.isNotEmpty) {
+    if (gradientColors != null && gradientColors!.length >= 2) {
       final gradient = LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -118,12 +133,24 @@ class Circle extends Drawable {
       );
       paint.shader = gradient.createShader(rect);
       paint.style = PaintingStyle.fill;
+    } else if (gradientColors != null && gradientColors!.length == 1) {
+      // Evita excepciones de gradiente inválido cuando solo llega un color.
+      paint.color = gradientColors!.first;
+      paint.style = PaintingStyle.fill;
     } else {
-      paint.color = color!;
+      paint.color = color;
       paint.style = PaintingStyle.fill;
     }
 
     canvas.drawCircle(center, radius, paint);
+
+    if (strokeWidth > 0) {
+      final strokePaint = Paint()
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke;
+      canvas.drawCircle(center, radius, strokePaint);
+    }
   }
 
   @override
