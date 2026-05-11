@@ -36,20 +36,27 @@ class _LayoutState extends State<Layout> {
 
   @override
   Widget build(BuildContext context) {
+    // `appData` concentra todo el estado global: figuras, selección y peticiones al modelo.
     final appData = Provider.of<AppData>(context);
+    // Controlador del área de texto de respuestas (panel derecho superior).
     final ScrollController scrollController = ScrollController();
-    final ScrollController propertiesController = ScrollController();
+    // Controlador del input donde el usuario escribe prompts.
     final TextEditingController textController = TextEditingController();
 
+    // Lista de ejemplos para el placeholder del input.
     final random = Random();
     final placeholders = [
-      'Dibuixa una línia 10, 50 i 100, 25 ...',
-      'Dibuixa dues linies i dos cercles',
-      'Dibuixa un cercle amb centre a 150, 200 i radi 50 ...',
-      'Fes un rectangle entre x=10, y=20 i x=100, y=200 ...',
-      'Dibuixa un cercle a la posició 50,100 de radi 34.66',
+      'Draw a line from 10, 50 to 100, 25 ...',
+      'Draw two lines and two circles',
+      'Draw a circle centered at 150, 200 with radius 50 ...',
+      'Make a rectangle between x=10, y=20 and x=100, y=200 ...',
+      'Draw a circle at position 50,100 with radius 34.66',
     ];
 
+    // Estructura general:
+    // - Izquierda: canvas de dibujo.
+    // - Derecha: salida textual + caja de prompt + botones.
+    // - Encima de todo: overlay de carga cuando se está procesando.
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: Text(widget.title),
@@ -57,22 +64,29 @@ class _LayoutState extends State<Layout> {
         child: SafeArea(
           child: Stack(
             children: [
+              // Capa base de la pantalla: dos columnas horizontales.
               Row(
                 children: [
+                  // Columna izquierda (2/3 aprox): zona de canvas interactiva.
                   Expanded(
                     flex: 2,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
-                        // update canvas size in model
+                        // Se actualiza el tamaño del canvas en el modelo para que
+                        // el LLM tenga contexto de dimensiones reales al dibujar.
                         appData.canvasWidth = constraints.maxWidth;
                         appData.canvasHeight = constraints.maxHeight;
                         return GestureDetector(
+                          // Al hacer click/tap en el canvas se intenta seleccionar
+                          // la forma superior que contenga ese punto.
                           onTapDown: (details) {
                             appData.selectShapeAtPosition(details.localPosition);
                           },
                           child: Container(
                             color: CupertinoColors.systemGrey5,
                             child: CustomPaint(
+                              // `CanvasPainter` renderiza todas las figuras y resalta
+                              // la figura seleccionada (si existe).
                               painter: CanvasPainter(
                                 drawables: appData.drawables,
                                 selectedIndex: appData.selectedShapeIndex,
@@ -84,10 +98,13 @@ class _LayoutState extends State<Layout> {
                       },
                     ),
                   ),
+                  // Columna derecha (1/3 aprox): consola textual + input + acciones.
                   Expanded(
                     flex: 1,
                     child: Column(
                       children: [
+                        // Área de salida: muestra la respuesta acumulada del modelo,
+                        // incluyendo tool calls y mensajes de estado.
                         Expanded(
                           child: Padding(
                             padding:
@@ -107,6 +124,8 @@ class _LayoutState extends State<Layout> {
                             ),
                           ),
                         ),
+                        // Caja de texto para introducir la instrucción al modelo.
+                        // Se deshabilita mientras hay una petición activa.
                         SizedBox(
                           height: 100,
                           width: double.infinity,
@@ -122,6 +141,9 @@ class _LayoutState extends State<Layout> {
                             ),
                           ),
                         ),
+                        // Fila de acciones principales:
+                        // - Query: envía prompt y ejecuta tool calling.
+                        // - Cancel: detiene la petición en curso.
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
@@ -132,6 +154,7 @@ class _LayoutState extends State<Layout> {
                                   onPressed: appData.isLoading
                                       ? null
                                       : () {
+                                          // Envía el prompt actual al flujo con tools.
                                           final userPrompt =
                                               textController.text;
                                           appData.callWithCustomTools(
@@ -157,6 +180,8 @@ class _LayoutState extends State<Layout> {
                   ),
                 ],
               ),
+              // Overlay de bloqueo visual durante carga:
+              // evita interacción accidental y comunica estado ocupado.
               if (appData.isLoading)
                 Positioned.fill(
                   child: Container(

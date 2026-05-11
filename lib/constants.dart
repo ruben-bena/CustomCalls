@@ -120,7 +120,7 @@ const tools = [
     "function": {
       "name": "update_shape",
       "description":
-          "Modifica las propiedades de la forma seleccionada actualmente. Para círculos: x, y, radius, color/fillColor, strokeWidth, gradientColors. Para rectángulos: topLeftX, topLeftY, bottomRightX, bottomRightY, width, height, color/fillColor, strokeWidth, gradientColors. Para líneas: startX, startY, endX, endY, color/strokeColor, strokeWidth. Para texto: x, y, text, color, fontSize, fontWeight, fontStyle, bold. Puede especificar 'id' para dirigirse a un índice de forma específico, de lo contrario actualiza la forma seleccionada.",
+          "Modifies the properties of the currently selected shape. For circles: x, y, radius, color/fillColor, strokeWidth, gradientColors. For rectangles: topLeftX, topLeftY, bottomRightX, bottomRightY, width, height, color/fillColor, strokeWidth, gradientColors. For lines: startX, startY, endX, endY, color/strokeColor, strokeWidth. For text: x, y, text, color, fontSize, fontWeight, fontStyle, bold. You can specify 'id' to target a specific shape index, otherwise it updates the selected shape.",
       "parameters": {
         "type": "object",
         "properties": {
