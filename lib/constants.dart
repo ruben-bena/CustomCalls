@@ -92,11 +92,11 @@ const tools = [
     "type": "function",
     "function": {
       "name": "select_shape",
-      "description": "Select a shape by its id. If no id is provided, it can select the last created shape.",
+      "description": "Select a shape by its index in the current canvas list. If no index is provided, it can select the last created shape.",
       "parameters": {
         "type": "object",
         "properties": {
-          "id": {"type": "string"},
+          "id": {"type": "integer"},
           "last": {"type": "boolean"}
         }
       }
@@ -106,11 +106,11 @@ const tools = [
     "type": "function",
     "function": {
       "name": "delete_shape",
-      "description": "Delete a shape by its id. If no id is provided, it deletes the selected shape.",
+      "description": "Delete the currently selected shape. If an index is provided, it can be used to target that shape, but the intended flow is to work with the current selection.",
       "parameters": {
         "type": "object",
         "properties": {
-          "id": {"type": "string"}
+          "id": {"type": "integer"}
         }
       }
     }
@@ -119,11 +119,11 @@ const tools = [
     "type": "function",
     "function": {
       "name": "update_shape",
-      "description": "Change properties of an existing shape. Supports id and properties such as color, fillColor, strokeColor, strokeWidth, x, y, radius, width, height, text, fontSize, bold, etc. If no id is provided, it updates the selected shape.",
+      "description": "Change properties of the currently selected shape. Supports index and properties such as color, fillColor, strokeColor, strokeWidth, x, y, radius, width, height, text, fontSize, bold, etc. If no index is provided, it updates the selected shape.",
       "parameters": {
         "type": "object",
         "properties": {
-          "id": {"type": "string"},
+          "id": {"type": "integer"},
           "color": {"type": "string"},
           "fillColor": {"type": "string"},
           "strokeColor": {"type": "string"},

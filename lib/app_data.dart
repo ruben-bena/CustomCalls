@@ -45,7 +45,9 @@ class AppData extends ChangeNotifier {
   bool get isLoading => _isLoading;
   int? get selectedShapeIndex => _selectedShapeIndex;
   Drawable? get selectedShape =>
-      _selectedShapeIndex != null && _selectedShapeIndex! < drawables.length
+      _selectedShapeIndex != null &&
+          _selectedShapeIndex! >= 0 &&
+          _selectedShapeIndex! < drawables.length
           ? drawables[_selectedShapeIndex!]
           : null;
 
@@ -72,6 +74,8 @@ class AppData extends ChangeNotifier {
   void selectShape(int index) {
     if (index >= 0 && index < drawables.length) {
       _selectedShapeIndex = index;
+    } else {
+      _selectedShapeIndex = null;
     }
     notifyListeners();
   }
@@ -80,6 +84,35 @@ class AppData extends ChangeNotifier {
   void deselectShape() {
     _selectedShapeIndex = null;
     notifyListeners();
+  }
+
+  // Devuelve una descripción corta de una figura para que el modelo pueda elegir índice.
+  String _shapeLabel(Drawable shape) {
+    if (shape is Circle) {
+      return 'Circle center=(${shape.center.dx.toStringAsFixed(1)}, ${shape.center.dy.toStringAsFixed(1)}) radius=${shape.radius.toStringAsFixed(1)} color=${shape.color}';
+    }
+    if (shape is Rectangle) {
+      return 'Rectangle topLeft=(${shape.topLeft.dx.toStringAsFixed(1)}, ${shape.topLeft.dy.toStringAsFixed(1)}) bottomRight=(${shape.bottomRight.dx.toStringAsFixed(1)}, ${shape.bottomRight.dy.toStringAsFixed(1)}) color=${shape.color}';
+    }
+    if (shape is Line) {
+      return 'Line start=(${shape.start.dx.toStringAsFixed(1)}, ${shape.start.dy.toStringAsFixed(1)}) end=(${shape.end.dx.toStringAsFixed(1)}, ${shape.end.dy.toStringAsFixed(1)}) color=${shape.color}';
+    }
+    if (shape is TextElement) {
+      return 'Text text="${shape.text}" position=(${shape.position.dx.toStringAsFixed(1)}, ${shape.position.dy.toStringAsFixed(1)}) color=${shape.color}';
+    }
+    return shape.runtimeType.toString();
+  }
+
+  // Resumen de todas las figuras actuales con su índice.
+  String _shapesSummary() {
+    if (drawables.isEmpty) {
+      return 'No shapes on canvas.';
+    }
+
+    return drawables.asMap().entries.map((entry) {
+      final isSelected = entry.key == _selectedShapeIndex ? ' [selected]' : '';
+      return '${entry.key}: ${_shapeLabel(entry.value)}$isSelected';
+    }).join('\n');
   }
 
   // Elimina la forma seleccionada si existe.
@@ -499,13 +532,19 @@ class AppData extends ChangeNotifier {
     setLoading(true);
 
     // Incluye tamaño del canvas para que el modelo dibuje con contexto.
-    final sizeInfo = "Canvas size: width=${canvasWidth.toStringAsFixed(1)}, height=${canvasHeight.toStringAsFixed(1)}.";
+    final sizeInfo =
+        "Canvas size: width=${canvasWidth.toStringAsFixed(1)}, height=${canvasHeight.toStringAsFixed(1)}.";
+    final shapesInfo = "Current shapes:\n${_shapesSummary()}";
 
     final body = {
       "model": functionCallingModel,
       "stream": false,
       "messages": [
-        {"role": "system", "content": sizeInfo},
+        {
+          "role": "system",
+          "content":
+              "$sizeInfo\n$shapesInfo\nUse the shape index when selecting, deleting or updating shapes."
+        },
         {"role": "user", "content": userPrompt}
       ],
       "tools": tools
@@ -782,15 +821,50 @@ class AppData extends ChangeNotifier {
         }
         break;
 
-      /**
-      * TODOs:
-      * - select_shape
-      * - delete_shape
-      * - update_shape
-      */ 
+      // Selecciona una figura por índice o la última figura creada.
+      case 'select_shape':
+        final rawId = parameters['id'];
+        final index = rawId == null ? null : int.tryParse(rawId.toString());
+
+        if (parameters['last'] == true && drawables.isNotEmpty) {
+          selectShape(drawables.length - 1);
+          _responseText = "$_responseText\nSelected index: ${drawables.length - 1}";
+        } else if (index != null && index >= 0 && index < drawables.length) {
+          selectShape(index);
+          _responseText = "$_responseText\nSelected index: $index";
+        } else {
+          deselectShape();
+        }
+        break;
+
+      // Elimina solo si hay una figura seleccionada.
+      case 'delete_shape':
+        if (_selectedShapeIndex != null &&
+            _selectedShapeIndex! >= 0 &&
+            _selectedShapeIndex! < drawables.length) {
+          deleteSelectedShape();
+        }
+        break;
+
+      // Actualiza solo si hay una figura seleccionada.
+      case 'update_shape':
+        if (_selectedShapeIndex == null ||
+            _selectedShapeIndex! < 0 ||
+            _selectedShapeIndex! >= drawables.length) {
+          break;
+        }
+
+        final index = _selectedShapeIndex!;
+        parameters.forEach((key, value) {
+          if (key != 'id') {
+            updateShapeProperty(index, key, value);
+          }
+        });
+        break;
 
       case 'clear_canvas':
         drawables.clear();
+        deselectShape();
         break;
 
       // Fallback para tools no soportadas.
